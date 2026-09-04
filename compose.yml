@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# The public website.
+#
+#   cp .env.example .env && docker compose up -d --build
+#
+# Unlike every other service in the platform this one has no dependencies: no
+# database, no Redis, no gateway. It is static files behind nginx, and it does
+# not join orbit-net because it has nothing on that network to talk to.
+# ---------------------------------------------------------------------------
+
+name: ${COMPOSE_PROJECT_NAME:-orbit-website}
+
+services:
+  web:
+    build:
+      context: .
+      # The lead endpoint is baked in at build time — NEXT_PUBLIC_* values are
+      # inlined into the bundle, so changing it means a rebuild, not a restart.
+      args:
+        NEXT_PUBLIC_LEAD_ENDPOINT: ${NEXT_PUBLIC_LEAD_ENDPOINT:-}
+    image: orbit/website:${IMAGE_TAG:-local}
+    container_name: orbit-website
+    restart: unless-stopped
+    ports:
+      - "${SITE_HTTP_PORT:-8120}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    read_only: true
+    tmpfs:
+      # nginx writes its pid and its temp bodies. Everything else in the image is
+      # static, so the filesystem can be read-only and these two are the exceptions.
+      - /var/run
+      - /var/cache/nginx
+    security_opt:
+      - no-new-privileges:true

@@ -1,0 +1,190 @@
+/*
+ * The website's theme.
+ *
+ * Built on the Orbit product design tokens: Orbit Orange on white, slate neutrals.
+ * The token names here are roles rather than values — `brand`, `surface`, `fg-muted` —
+ * so a palette change is this file and nothing else.
+ *
+ * Light, and it does not switch. A marketing site is read once, briefly, often on a
+ * phone in daylight; a single committed look renders the same for every reader, and
+ * there is no long reading session here to fatigue anybody.
+ */
+
+@import 'tailwindcss';
+
+@theme {
+  /* --- Brand — Orbit Orange ---------------------------------------------------
+     Warm on purpose. Every competitor in this category is blue or black, and the
+     first job of a brand colour is to be the one people can pick out. */
+  --color-brand: #ff6b00;
+  --color-brand-hover: #e05d00;
+  --color-brand-active: #c24f00;
+  --color-brand-wash: #fff3eb;
+
+  /* The ink orange. #ff6b00 is a 2.9:1 contrast on white — right for a filled button
+     with white text, wrong for orange text on a white card. Anywhere the brand colour
+     carries words rather than fills a shape, this is the one to use. */
+  --color-brand-ink: #b34700;
+
+  /* --- Surfaces --------------------------------------------------------------- */
+  --color-canvas: #ffffff;
+  --color-surface: #f8fafc;
+  --color-card: #ffffff;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cbd5e1;
+
+  /* Slate, used deliberately as the counterweight to the orange. One dark band near
+     the end of a long white page resets the eye and makes the final call to action
+     land — the same trick as a full-bleed image, without the stock photograph. */
+  --color-ink: #0f172a;
+  --color-ink-soft: #1e293b;
+  --color-ink-line: #334155;
+
+  /* --- Text -------------------------------------------------------------------
+     Three steps, each of which clears 4.5:1 on both canvas and surface. */
+  --color-fg: #0f172a;
+  --color-fg-muted: #475569;
+  --color-fg-dim: #64748b;
+  --color-fg-on-brand: #ffffff;
+
+  /* --- Semantics --------------------------------------------------------------
+     Set to the readable variant of each hue rather than the vivid one. A tint of a
+     darker green is indistinguishable from a tint of a brighter one at 10% opacity,
+     but the text set in it is the difference between legible and not. */
+  --color-signal: #047857;
+  --color-caution: #b45309;
+  --color-surge: #dc2626;
+  --color-info: #0284c7;
+
+  /* --- Type ------------------------------------------------------------------- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+  /* Fluid display sizes. clamp() rather than breakpoints, because a headline that
+     steps between two sizes looks broken on exactly the widths nobody tested. */
+  --text-display: clamp(2.625rem, 1.2rem + 5.1vw, 4.75rem);
+  --text-headline: clamp(1.875rem, 1.1rem + 3vw, 3rem);
+  --text-title: clamp(1.3125rem, 1rem + 1.2vw, 1.75rem);
+
+  /* --- Shape ------------------------------------------------------------------
+     Rounded rectangles rather than pills. A pill button reads as consumer-app chrome;
+     these sit better beside the cards and the form fields, which are the two things
+     on this site a visitor actually has to use. */
+  --radius-control: 0.625rem;
+  --radius-card: 0.875rem;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* The sticky header is 4rem tall; without this, every in-page anchor lands with
+       its heading hidden underneath it. */
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand) 28%, transparent);
+  }
+
+  /* A ring rather than an outline, in the brand colour. An outline removed for looks
+     is an accessibility bug that only shows up for the people least able to work
+     around it. */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(255 107 0 / 0.28);
+    border-radius: 6px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer utilities {
+  /* The one gradient in the system, used for headline emphasis only. It runs through
+     the orange rather than fading out of it, so the emphasised words stay as readable
+     as the ones around them. Never applied to body text. */
+  .text-gradient {
+    background: linear-gradient(96deg, #ff6b00 0%, #ff8a2b 45%, #ff6b00 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .grid-backdrop {
+    background-image:
+      linear-gradient(var(--color-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 75%);
+  }
+
+  /* Cards sit on white, so they cannot rely on a fill to separate them from the page.
+     A hairline plus a shadow soft enough to read as paper does the work instead. */
+  .lift {
+    box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  }
+
+  .lift-md {
+    box-shadow:
+      0 4px 6px -1px rgb(15 23 42 / 0.08),
+      0 2px 4px -2px rgb(15 23 42 / 0.04);
+  }
+
+  .lift-lg {
+    box-shadow:
+      0 2px 4px rgb(15 23 42 / 0.04),
+      0 24px 60px -24px rgb(15 23 42 / 0.28);
+  }
+
+  /* The warm wash behind the hero and the closing call to action. Two soft orange
+     fields rather than one, so the light reads as coming from somewhere. */
+  .warm-wash {
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 0%, rgb(255 107 0 / 0.1), transparent 70%),
+      radial-gradient(ellipse 50% 45% at 90% 10%, rgb(255 138 43 / 0.12), transparent 70%);
+  }
+
+  .numeric {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+}
+
+/* Everything that moves, stops. A parallax hero is a nice touch for most readers and a
+   reason to close the tab for a reader with a vestibular disorder. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
