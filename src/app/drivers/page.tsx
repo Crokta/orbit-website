@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { ArrowRight, Button } from '@/components/Button'
+import { breadcrumbSchema, graph, driverFaqSchema } from '@/lib/seo'
 import { Container } from '@/components/Container'
 import { Eyebrow } from '@/components/Eyebrow'
 import { Card, Section } from '@/components/Section'
@@ -16,6 +17,18 @@ export const metadata: Metadata = {
   title: 'Drive with Orbit',
   description:
     'Earn on your own hours with fares you see before you accept, daily payouts and support staffed by people. Here is exactly what it takes to get on the road with Orbit.',
+  alternates: { canonical: '/drivers/' },
+  openGraph: {
+    type: 'website',
+    title: 'Drive with Orbit',
+    description: 'Earn on your own hours with fares you see before you accept, daily payouts and support staffed by people. Here is exactly what it takes to get on the road with Orbit.',
+    url: '/drivers/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Drive with Orbit',
+    description: 'Earn on your own hours with fares you see before you accept, daily payouts and support staffed by people. Here is exactly what it takes to get on the road with Orbit.',
+  },
 }
 
 export default function DriversPage() {
@@ -165,12 +178,30 @@ export default function DriversPage() {
       </Section>
 
       <Section id="faq" eyebrow="Questions" title="The ones drivers ask first">
-        <div className="grid gap-px overflow-hidden rounded-card border border-line bg-line md:grid-cols-2">
+        {/* <details>, not a grid of divs. The same questions are emitted as FAQPage
+            structured data, and Google checks that the marked-up answer is actually
+            present and readable on the page — collapsed is fine, hidden behind
+            JavaScript is not. This also makes the list keyboard-navigable for free. */}
+        <div className="overflow-hidden rounded-card border border-line">
           {driverFaqs.map((faq) => (
-            <div key={faq.q} className="bg-surface p-7">
-              <h3 className="text-base font-semibold text-fg">{faq.q}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-fg-muted">{faq.a}</p>
-            </div>
+            <details
+              key={faq.q}
+              className="group border-b border-line bg-canvas last:border-0 open:bg-surface"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6 text-base font-semibold text-fg marker:content-none hover:bg-surface">
+                {faq.q}
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden
+                  className="size-4 shrink-0 text-brand transition-transform group-open:rotate-45"
+                >
+                  <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                </svg>
+              </summary>
+
+              <p className="px-6 pb-6 text-sm leading-relaxed text-fg-muted">{faq.a}</p>
+            </details>
           ))}
         </div>
       </Section>
@@ -205,6 +236,11 @@ export default function DriversPage() {
           </div>
         </Container>
       </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: graph(breadcrumbSchema([{ name: 'Orbit', path: '/' }, { name: 'Drivers', path: '/drivers/' }]), driverFaqSchema) }}
+      />
     </>
   )
 }

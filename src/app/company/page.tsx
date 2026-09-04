@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { breadcrumbSchema, graph } from '@/lib/seo'
 import { Container } from '@/components/Container'
 import { Eyebrow } from '@/components/Eyebrow'
 import { Card, Section } from '@/components/Section'
@@ -9,6 +10,18 @@ import { company } from '@/lib/content'
 export const metadata: Metadata = {
   title: 'About Crokta',
   description: `${company.name} builds and operates Orbit — a platform for moving people, built on upfront pricing, verified drivers and support that can actually help.`,
+  alternates: { canonical: '/company/' },
+  openGraph: {
+    type: 'website',
+    title: 'About Crokta',
+    description: `${company.name} builds and operates Orbit — a platform for moving people, built on upfront pricing, verified drivers and support that can actually help.`,
+    url: '/company/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Crokta',
+    description: `${company.name} builds and operates Orbit — a platform for moving people, built on upfront pricing, verified drivers and support that can actually help.`,
+  },
 }
 
 const beliefs = [
@@ -157,6 +170,11 @@ export default function CompanyPage() {
       </Section>
 
       <Contact />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: graph(breadcrumbSchema([{ name: 'Orbit', path: '/' }, { name: 'Company', path: '/company/' }])) }}
+      />
     </>
   )
 }

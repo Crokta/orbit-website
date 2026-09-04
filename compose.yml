@@ -21,6 +21,10 @@ services:
     image: orbit/website:${IMAGE_TAG:-local}
     container_name: orbit-website
     restart: unless-stopped
+    environment:
+      # Substituted into the site's Content-Security-Policy at container start. The lead
+      # form posts cross-origin to the gateway, and connect-src has to name it.
+      ORBIT_API_ORIGIN: ${ORBIT_API_ORIGIN:-}
     ports:
       - "${SITE_HTTP_PORT:-8120}:8080"
     healthcheck:

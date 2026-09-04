@@ -234,7 +234,7 @@ export const businessFeatures = [
 /** The lead magnet offered on the business page. */
 export const leadMagnet = {
   title: 'The Ground Transport Cost Audit',
-  subtitle: 'A 14-page working guide for finance and travel managers',
+  subtitle: 'A 17-page working guide for finance and travel managers',
   blurb:
     'Most organisations know what they spend on ground travel and almost none know what it is costing them. This guide walks through the seven places that money leaks, with the questions to ask and a worksheet to run the numbers for your own organisation.',
   contents: [

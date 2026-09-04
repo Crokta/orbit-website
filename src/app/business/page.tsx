@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { ArrowRight, Button } from '@/components/Button'
+import { breadcrumbSchema, graph } from '@/lib/seo'
 import { Container } from '@/components/Container'
 import { Eyebrow } from '@/components/Eyebrow'
 import { Card, Section } from '@/components/Section'
@@ -11,7 +12,19 @@ import { businessFeatures, company } from '@/lib/content'
 export const metadata: Metadata = {
   title: 'Orbit for Business',
   description:
-    'Corporate ground travel with policy enforced at booking, one consolidated invoice coded to your cost centres, and live visibility of every trip. Download the Ground Transport Cost Audit.',
+    'Corporate ground travel with policy enforced at booking, one invoice coded to your cost centres, and live visibility of every trip. Free cost guide inside.',
+  alternates: { canonical: '/business/' },
+  openGraph: {
+    type: 'website',
+    title: 'Orbit for Business',
+    description: 'Corporate ground travel with policy enforced at booking, one invoice coded to your cost centres, and live visibility of every trip. Free cost guide inside.',
+    url: '/business/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Orbit for Business',
+    description: 'Corporate ground travel with policy enforced at booking, one invoice coded to your cost centres, and live visibility of every trip. Free cost guide inside.',
+  },
 }
 
 const problems = [
@@ -146,6 +159,11 @@ export default function BusinessPage() {
       </Section>
 
       <Contact />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: graph(breadcrumbSchema([{ name: 'Orbit', path: '/' }, { name: 'For business', path: '/business/' }])) }}
+      />
     </>
   )
 }

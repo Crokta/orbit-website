@@ -25,7 +25,7 @@ import { cn } from '@/lib/cn'
 
 const endpoint = process.env.NEXT_PUBLIC_LEAD_ENDPOINT
 
-type Status = 'idle' | 'sending' | 'sent' | 'mail' | 'error'
+type Status = 'idle' | 'sending' | 'sent' | 'mail' | 'throttled' | 'error'
 
 const fleetSizes = [
   'Fewer than 25 trips a month',
@@ -41,6 +41,8 @@ export function LeadForm() {
     event.preventDefault()
 
     const data = new FormData(event.currentTarget)
+
+    // Field names match the capture endpoint's own contract, so the object posts as-is.
     const lead = {
       name: String(data.get('name') ?? ''),
       email: String(data.get('email') ?? ''),
@@ -79,6 +81,14 @@ export function LeadForm() {
         body: JSON.stringify(lead),
       })
 
+      // 409 is the rate limiter, not a server fault. Telling somebody behind a shared
+      // office connection that "something went wrong" would send them away; telling them
+      // to wait a moment keeps the enquiry.
+      if (response.status === 429 || response.status === 409) {
+        setStatus('throttled')
+        return
+      }
+
       setStatus(response.ok ? 'sent' : 'error')
     } catch {
       setStatus('error')
@@ -87,6 +97,15 @@ export function LeadForm() {
 
   if (status === 'sent') {
     return <Result title="On its way." body={`We have sent ${leadMagnet.title} to your inbox. If it has not arrived in a few minutes, check your spam folder or email us at ${company.email}.`} />
+  }
+
+  if (status === 'throttled') {
+    return (
+      <Result
+        title="One moment."
+        body={`We have had several requests from your network in the last hour. Wait a few minutes and try again, or email ${company.email} and we will send it straight over.`}
+      />
+    )
   }
 
   if (status === 'mail') {

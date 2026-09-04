@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { ArrowRight, Button } from '@/components/Button'
+import { breadcrumbSchema, graph } from '@/lib/seo'
 import { Container } from '@/components/Container'
 import { Eyebrow } from '@/components/Eyebrow'
 import { Card, Section } from '@/components/Section'
@@ -12,6 +13,18 @@ export const metadata: Metadata = {
   title: 'Ride with Orbit',
   description:
     'Upfront fares that do not change, verified drivers, and support that can actually fix things. Here is what riding with Orbit is like.',
+  alternates: { canonical: '/riders/' },
+  openGraph: {
+    type: 'website',
+    title: 'Ride with Orbit',
+    description: 'Upfront fares that do not change, verified drivers, and support that can actually fix things. Here is what riding with Orbit is like.',
+    url: '/riders/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ride with Orbit',
+    description: 'Upfront fares that do not change, verified drivers, and support that can actually fix things. Here is what riding with Orbit is like.',
+  },
 }
 
 const promises = [
@@ -127,6 +140,11 @@ export default function RidersPage() {
       </Section>
 
       <Contact />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: graph(breadcrumbSchema([{ name: 'Orbit', path: '/' }, { name: 'Riders', path: '/riders/' }])) }}
+      />
     </>
   )
 }

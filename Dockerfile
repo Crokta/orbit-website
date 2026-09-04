@@ -44,10 +44,19 @@ RUN adduser -u 64199 -D -H orbit \
  && mkdir -p /var/cache/nginx /var/run \
  && chown -R 64199:64199 /var/cache/nginx /var/run /etc/nginx/conf.d /usr/share/nginx/html
 
-COPY --chown=64199:64199 nginx.conf /etc/nginx/conf.d/default.conf
+# A template, not a finished config — see the CSP note inside it. The stock nginx image
+# runs envsubst over /etc/nginx/templates at startup, which is how the API origin gets in.
+COPY --chown=64199:64199 nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build --chown=64199:64199 /src/out /usr/share/nginx/html
 
 USER 64199
+
+# Only ORBIT_API_ORIGIN is substituted. Without this filter envsubst would also replace
+# $host, $scheme and $uri — nginx's own runtime variables — and every try_files rule would
+# resolve to an empty string.
+ENV NGINX_ENVSUBST_FILTER=ORBIT_API_ORIGIN
+ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx/conf.d
+ENV ORBIT_API_ORIGIN=""
 
 EXPOSE 8080
 
